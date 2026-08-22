@@ -12,6 +12,7 @@ export default function ForgotPassword({ setPage }) {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleRequest() {
     if (!email) return;
@@ -87,12 +88,22 @@ export default function ForgotPassword({ setPage }) {
               </div>
               <div className="auth-field">
                 <label className="auth-field-label">New Password</label>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  value={newPassword}
-                  onChange={e => setNewPassword(e.target.value)}
-                />
+                <div className="password-field-wrap">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={newPassword}
+                    onChange={e => setNewPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle-btn"
+                    tabIndex={-1}
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? '🙈' : '👁️'}
+                  </button>
+                </div>
               </div>
               {error && <div className="auth-error">⚠ {error}</div>}
               <button className="auth-submit-btn" onClick={handleReset} disabled={loading}>

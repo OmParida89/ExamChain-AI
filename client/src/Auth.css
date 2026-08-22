@@ -147,6 +147,16 @@
 .auth-field.student input:focus { border-color: #6FBF96; }
 .auth-field input::placeholder { color: rgba(245,240,230,0.3); }
 
+.password-field-wrap { position: relative; }
+.password-field-wrap input { padding-right: 2rem; }
+.password-toggle-btn {
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  font-size: 0.95rem; line-height: 1; padding: 0.2rem; opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.password-toggle-btn:hover { opacity: 1; }
+
 .auth-error {
   position: relative; z-index: 1;
   display: flex; align-items: center; gap: 0.5rem;

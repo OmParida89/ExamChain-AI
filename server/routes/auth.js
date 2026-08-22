@@ -124,7 +124,9 @@ router.post('/resend-otp', async (req, res) => {
     user.otpExpiry = new Date(Date.now() + OTP_EXPIRY_MS);
     await user.save();
 
-    await sendOTPEmail(email, user.name, otp, 'verify');
+    const sent = await sendOTPEmail(email, user.name, otp, 'verify');
+    if (!sent) return res.status(500).json({ error: 'Failed to send OTP email. Please try again in a moment.' });
+
     res.json({ success: true, message: 'New OTP sent' });
   } catch (err) {
     res.status(500).json({ error: err.message });

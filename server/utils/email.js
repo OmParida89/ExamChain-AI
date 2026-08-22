@@ -1,14 +1,23 @@
 require('dotenv').config({ path: __dirname + '/../.env' });
+const dns = require('dns');
 const nodemailer = require('nodemailer');
 
+// Belt-and-suspenders IPv4 fix: Render (and similar PaaS hosts) don't support
+// IPv6 egress, so letting Node resolve Gmail's IPv6 address first fails with
+// ENETUNREACH. This forces IPv4 for every DNS lookup in the process, since
+// the 'family' option on the transporter alone isn't reliably honored by
+// Nodemailer's 'service: gmail' shorthand.
+if (dns.setDefaultResultOrder) dns.setDefaultResultOrder('ipv4first');
+
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_APP_PASSWORD
   },
-  family: 4 // force IPv4 — Render (and similar PaaS hosts) don't support IPv6 egress,
-            // so letting Node pick Gmail's IPv6 address first fails with ENETUNREACH
+  family: 4
 });
 
 function generateOTP() {

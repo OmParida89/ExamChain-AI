@@ -9,6 +9,7 @@ export default function TeacherLogin({ setPage, setUser, setVerifyEmail }) {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit() {
     setLoading(true);
@@ -91,12 +92,22 @@ export default function TeacherLogin({ setPage, setUser, setVerifyEmail }) {
 
           <div className="auth-field">
             <label className="auth-field-label">Password</label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={form.password}
-              onChange={e => setForm({ ...form, password: e.target.value })}
-            />
+            <div className="password-field-wrap">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                value={form.password}
+                onChange={e => setForm({ ...form, password: e.target.value })}
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                tabIndex={-1}
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
           </div>
 
           {mode === 'login' && (
