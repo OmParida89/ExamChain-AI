@@ -298,6 +298,14 @@
 
 .real-input { position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px; }
 
+.code-clear-link {
+  position: relative; z-index: 1;
+  text-align: center; font-size: 0.75rem; color: rgba(245,240,230,0.4);
+  cursor: pointer; margin-bottom: 1rem; margin-top: -0.8rem;
+  transition: color 0.2s;
+}
+.code-clear-link:hover { color: #E7A0A2; }
+
 .error-shake { animation: entryShake 0.4s ease; }
 @keyframes entryShake {
   0%, 100% { transform: translateX(0); }

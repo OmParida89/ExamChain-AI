@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import '../Auth.css';
 
@@ -17,6 +17,18 @@ export default function StudentExamEntry({ setPage, setActiveExamId }) {
     setCode(val);
     if (error) setError('');
   }
+
+  function handleClear() {
+    setCode('');
+    if (error) setError('');
+    inputRef.current?.focus();
+  }
+
+  // Best-effort: keep the (invisible) input's cursor pinned to the end after
+  // every change, so it doesn't drift to the start on some browsers.
+  useLayoutEffect(() => {
+    if (inputRef.current) inputRef.current.setSelectionRange(code.length, code.length);
+  }, [code]);
 
   async function handleJoin() {
   if (code.length !== 6) {
@@ -54,7 +66,16 @@ export default function StudentExamEntry({ setPage, setActiveExamId }) {
   }
 
   function handleKeyDown(e) {
-    if (e.key === 'Enter') handleJoin();
+    if (e.key === 'Enter') { handleJoin(); return; }
+    if (e.key === 'Backspace' || e.key === 'Delete') {
+      // Handled manually instead of trusting the native cursor position in this
+      // hidden input — guarantees backspace always removes the last character,
+      // even if the cursor has drifted (which is what made it silently do
+      // nothing before, since there was nothing before the drifted cursor).
+      e.preventDefault();
+      setCode(c => c.slice(0, -1));
+      if (error) setError('');
+    }
   }
 
   const boxes = Array.from({ length: 6 }, (_, i) => code[i] || '');
@@ -86,6 +107,10 @@ export default function StudentExamEntry({ setPage, setActiveExamId }) {
               </div>
             ))}
           </div>
+
+          {code.length > 0 && (
+            <div className="code-clear-link" onClick={handleClear}>✕ Clear</div>
+          )}
 
           <input
             ref={inputRef}
