@@ -84,6 +84,9 @@ tr.row-odd { background: rgba(245,240,230,0.025); }
 .pctl-pill.high { background: rgba(45,106,79,0.18); color: #6FBF96; }
 .pctl-pill.low { background: rgba(155,34,38,0.15); color: #E7A0A2; }
 
+.tab-switch-warn { color: #E5C158; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; }
+.tab-switch-severe { color: #E7A0A2; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; font-weight: 700; }
+
 .empty-state { text-align: center; padding: 3rem; color: rgba(245,240,230,0.4); }
 
 /* ===== STUDENT VIEW ===== */

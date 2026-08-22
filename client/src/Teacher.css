@@ -279,9 +279,62 @@
   color: #E5C158; padding: 0.7rem 1rem; border-radius: 8px; margin-bottom: 1.2rem; font-size: 0.85rem;
 }
 
+/* ---- Capacity & Drift panel ---- */
+.drift-panel { margin-top: 2rem; }
+.drift-explainer { font-size: 0.8rem; color: rgba(245,240,230,0.45); margin-bottom: 1rem; }
+
+.drift-banner {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.8rem 1.1rem; border-radius: 10px; margin-bottom: 1.2rem; font-size: 0.88rem;
+  opacity: 0; animation: tRise 0.5s ease forwards;
+}
+.drift-banner.ok { background: rgba(45,106,79,0.12); border: 1px solid rgba(45,106,79,0.4); color: #6FBF96; }
+.drift-banner.warn { background: rgba(155,34,38,0.12); border: 1px solid rgba(155,34,38,0.4); color: #E7A0A2; }
+
+.drift-row {
+  background: rgba(245,240,230,0.05); border: 1px solid rgba(245,240,230,0.1);
+  border-radius: 10px; padding: 1rem 1.2rem; margin-bottom: 0.8rem;
+  opacity: 0; animation: tRise 0.5s ease forwards;
+}
+.drift-row-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; gap: 1rem; }
+.drift-concept { font-family: 'Fraunces', serif; font-size: 0.98rem; }
+.drift-stats { font-size: 0.78rem; color: rgba(245,240,230,0.5); white-space: nowrap; }
+
+.drift-bar-track { height: 7px; background: rgba(245,240,230,0.08); border-radius: 99px; overflow: hidden; }
+.drift-bar-fill { height: 100%; border-radius: 99px; transition: width 0.6s ease; }
+.drift-bar-fill.ok { background: #2D6A4F; }
+.drift-bar-fill.warn { background: #C9A227; }
+.drift-bar-fill.over { background: #9B2226; }
+
+.collision-note {
+  margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px dashed rgba(245,240,230,0.12);
+  font-size: 0.78rem; color: #E7A0A2; line-height: 1.5;
+}
+
+/* ---- Live Exam Activity panel ---- */
+.live-row {
+  background: rgba(245,240,230,0.05); border: 1px solid rgba(245,240,230,0.1);
+  border-radius: 10px; padding: 0.85rem 1.2rem; margin-bottom: 0.6rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  opacity: 0; animation: tRise 0.5s ease forwards;
+}
+.live-name { font-family: 'Fraunces', serif; font-size: 0.95rem; }
+
+.status-chip {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; padding: 0.3rem 0.7rem;
+  border-radius: 99px; white-space: nowrap;
+}
+.status-chip.progress { background: rgba(201,162,39,0.12); border: 1px solid rgba(201,162,39,0.35); color: #E5C158; }
+.status-chip.submitted { background: rgba(45,106,79,0.12); border: 1px solid rgba(45,106,79,0.4); color: #6FBF96; }
+.status-chip.timedout { background: rgba(155,34,38,0.12); border: 1px solid rgba(155,34,38,0.4); color: #E7A0A2; }
+
+.tab-count { font-size: 0.76rem; color: rgba(245,240,230,0.4); white-space: nowrap; }
+.tab-count.warn { color: #E5C158; }
+.tab-count.severe { color: #E7A0A2; font-weight: 600; }
+
 @media (prefers-reduced-motion: reduce) {
   .t-glow span { animation: none; }
-  .page-head, .exam-card, .dash-head, .form-card, .review-panel, .q-row, .seal-badge { animation: none; opacity: 1; }
+  .page-head, .exam-card, .dash-head, .form-card, .review-panel, .q-row, .seal-badge, .drift-banner, .drift-row, .live-row { animation: none; opacity: 1; }
 }
 
 .navbar {

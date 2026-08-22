@@ -6,6 +6,13 @@ const AttemptSchema = new mongoose.Schema({
   examId: String,
   startedAt: Date,
   submittedAt: Date,
+  assignedVariants: [
+    {
+      _id: false,
+      questionId: String,
+      variantIndex: Number
+    }
+  ],
   answers: [
     {
       questionId: String,
@@ -20,6 +27,8 @@ const AttemptSchema = new mongoose.Schema({
   totalQuestions: Number,
   rawScore: Number,
   normalizedScore: Number,
+  tabLeaveCount: { type: Number, default: 0 },
+  isLate: { type: Boolean, default: false },
   timestamp: { type: Date, default: Date.now }
 });
 

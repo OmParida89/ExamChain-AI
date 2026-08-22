@@ -46,10 +46,11 @@ router.get('/my-exams', authMiddleware, teacherOnly, async (req, res) => {
 });
 
 // Get single exam by ID (teacher only, for dashboard)
-router.get('/:examId', authMiddleware, async (req, res) => {
+router.get('/:examId', authMiddleware, teacherOnly, async (req, res) => {
   try {
     const exam = await Exam.findById(req.params.examId);
     if (!exam) return res.status(404).json({ error: 'Exam not found' });
+    if (exam.teacherId !== req.user.id) return res.status(403).json({ error: 'Not your exam' });
     res.json(exam);
   } catch (err) {
     res.status(500).json({ error: err.message });

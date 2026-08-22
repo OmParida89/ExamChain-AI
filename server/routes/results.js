@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Attempt = require('../models/Attempt');
 const ExamRelease = require('../models/ExamRelease');
+const Exam = require('../models/Exam');
 const { normalizeScores } = require('../utils/normalize');
 const { authMiddleware, teacherOnly, studentOnly } = require('../middleware/auth');
 
@@ -9,7 +10,15 @@ const { authMiddleware, teacherOnly, studentOnly } = require('../middleware/auth
 router.get('/teacher/:examId', authMiddleware, teacherOnly, async (req, res) => {
   try {
     const { examId } = req.params;
-    const attempts = await Attempt.find({ examId });
+
+    const exam = await Exam.findById(examId);
+    if (!exam) return res.status(404).json({ error: 'Exam not found' });
+    if (exam.teacherId !== req.user.id) return res.status(403).json({ error: 'Not your exam' });
+
+    // Only graded (submitted) attempts belong in the leaderboard/percentile math —
+    // an in-progress attempt has no rawScore yet and would silently corrupt
+    // normalizeScores()'s comparisons for everyone else.
+    const attempts = await Attempt.find({ examId, submittedAt: { $ne: null } });
 
     if (attempts.length === 0) {
       return res.json({ attempts: [], released: false });
@@ -49,6 +58,10 @@ router.post('/release/:examId', authMiddleware, teacherOnly, async (req, res) =>
   try {
     const { examId } = req.params;
 
+    const exam = await Exam.findById(examId);
+    if (!exam) return res.status(404).json({ error: 'Exam not found' });
+    if (exam.teacherId !== req.user.id) return res.status(403).json({ error: 'Not your exam' });
+
     await ExamRelease.findOneAndUpdate(
       { examId },
       { released: true, releasedAt: new Date() },
@@ -65,6 +78,11 @@ router.post('/release/:examId', authMiddleware, teacherOnly, async (req, res) =>
 router.post('/unrelease/:examId', authMiddleware, teacherOnly, async (req, res) => {
   try {
     const { examId } = req.params;
+
+    const exam = await Exam.findById(examId);
+    if (!exam) return res.status(404).json({ error: 'Exam not found' });
+    if (exam.teacherId !== req.user.id) return res.status(403).json({ error: 'Not your exam' });
+
     await ExamRelease.findOneAndUpdate({ examId }, { released: false });
     res.json({ success: true, message: 'Scores hidden again' });
   } catch (err) {
@@ -76,6 +94,11 @@ router.post('/unrelease/:examId', authMiddleware, teacherOnly, async (req, res) 
 router.get('/analytics/:examId', authMiddleware, teacherOnly, async (req, res) => {
   try {
     const { examId } = req.params;
+
+    const exam = await Exam.findById(examId);
+    if (!exam) return res.status(404).json({ error: 'Exam not found' });
+    if (exam.teacherId !== req.user.id) return res.status(403).json({ error: 'Not your exam' });
+
     const attempts = await Attempt.find({ examId, submittedAt: { $ne: null } });
 
     if (attempts.length === 0) {

@@ -45,6 +45,21 @@
 .timer.urgent { border-color: rgba(155,34,38,0.6); color: #E7A0A2; animation: exPulse 1.4s ease-in-out infinite; }
 @keyframes exPulse { 0%,100%{ box-shadow: 0 0 0 0 rgba(155,34,38,0.35);} 50%{ box-shadow: 0 0 0 8px rgba(155,34,38,0);} }
 
+.tab-warning-chip {
+  font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 0.85rem;
+  background: rgba(201,162,39,0.12); border: 1px solid rgba(201,162,39,0.4);
+  color: #E5C158; padding: 0.5rem 0.9rem; border-radius: 9px;
+}
+.tab-warning-chip.severe { background: rgba(155,34,38,0.12); border-color: rgba(155,34,38,0.5); color: #E7A0A2; }
+
+.tab-warning-toast {
+  background: rgba(155,34,38,0.14); border: 1px solid rgba(155,34,38,0.4);
+  color: #E7A0A2; padding: 0.7rem 1rem; border-radius: 8px;
+  margin-bottom: 1rem; font-size: 0.85rem; text-align: center;
+  animation: exToastIn 0.3s ease;
+}
+@keyframes exToastIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
 .q-card {
   background: rgba(245,240,230,0.04);
   border: 1px solid rgba(245,240,230,0.1);

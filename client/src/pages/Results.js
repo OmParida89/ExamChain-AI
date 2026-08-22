@@ -151,7 +151,7 @@ export default function Results({ examId }) {
         <table>
           <thead>
             <tr>
-              <th>Rank</th><th>Student</th><th>Roll No.</th><th>Score</th><th>Percentile</th>
+              <th>Rank</th><th>Student</th><th>Roll No.</th><th>Score</th><th>Percentile</th><th>Tab Switches</th>
             </tr>
           </thead>
           <tbody>
@@ -160,11 +160,14 @@ export default function Results({ examId }) {
                 <td><span className={`rank-stamp ${i === 0 ? 'top' : ''}`}>{i + 1}</span></td>
                 <td>{a.studentName}</td>
                 <td>{a.studentId}</td>
-                <td>{a.correctCount}/{a.totalQuestions}</td>
+                <td>{a.isLate && <span title="Submitted after the deadline">⏰ </span>}{a.correctCount}/{a.totalQuestions}</td>
                 <td>
                   <span className={`pctl-pill ${a.normalizedScore >= 50 ? 'high' : 'low'}`}>
                     {a.normalizedScore}th
                   </span>
+                </td>
+                <td className={a.tabLeaveCount >= 3 ? 'tab-switch-severe' : a.tabLeaveCount > 0 ? 'tab-switch-warn' : ''}>
+                  {a.tabLeaveCount > 0 ? `⚠️ ${a.tabLeaveCount}` : '—'}
                 </td>
               </tr>
             ))}

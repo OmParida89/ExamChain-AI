@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { generateOTP, sendOTPEmail } = require('../utils/email');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'examchain_secret_key';
+const JWT_SECRET = require('../config/jwtSecret');
 const OTP_EXPIRY_MS = 10 * 60 * 1000; // 10 minutes
 
 // ---------- TEACHER REGISTER ----------
