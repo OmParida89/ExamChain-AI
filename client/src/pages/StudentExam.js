@@ -203,7 +203,11 @@ export default function StudentExam({ examId, user, setPage }) {
         </div>
 
         <div className="submit-row">
-          <button className="exam-submit-btn" onClick={submitExam}>Submit Exam</button>
+          {currentIndex < questions.length - 1 ? (
+            <button className="exam-submit-btn" onClick={() => setCurrentIndex(i => i + 1)}>Next →</button>
+          ) : (
+            <button className="exam-submit-btn" onClick={submitExam}>Submit Exam</button>
+          )}
         </div>
       </div>
     </div>

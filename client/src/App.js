@@ -47,9 +47,7 @@ export default function App() {
         {user?.role === 'student' && (
           <>
             <button className="nav-btn student-variant" onClick={() => setPage('studentEntry')}>Student Dashboard</button>
-            {activeExamId && (
-              <button className="nav-btn student-variant" onClick={() => setPage('studentResults')}>Results</button>
-            )}
+            <button className="nav-btn student-variant" onClick={() => setPage('studentResults')}>Results</button>
           </>
         )}
 
@@ -93,8 +91,8 @@ export default function App() {
       {page === 'studentExam' && user?.role === 'student' && activeExamId && (
         <StudentExam examId={activeExamId} user={user} setPage={setPage} />
       )}
-      {page === 'studentResults' && user?.role === 'student' && activeExamId && (
-        <StudentResults examId={activeExamId} />
+      {page === 'studentResults' && user?.role === 'student' && (
+        <StudentResults />
       )}
 
       {!user && (page === 'teacherExams' || page === 'teacherDashboard' || page === 'results') && (

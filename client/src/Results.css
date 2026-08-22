@@ -119,3 +119,17 @@ tr.row-odd { background: rgba(245,240,230,0.025); }
 .lock-icon { font-size: 2.2rem; margin-bottom: 1rem; }
 .locked-title { font-family: 'Fraunces', serif; font-size: 1.2rem; color: #E5C158; margin-bottom: 0.5rem; }
 .locked-sub { font-size: 0.85rem; color: rgba(245,240,230,0.45); }
+
+.history-list { max-width: 480px; margin: 0 auto; text-align: left; }
+.history-row {
+  background: rgba(245,240,230,0.05); border: 1px solid rgba(245,240,230,0.12);
+  border-radius: 14px; padding: 1.1rem 1.4rem; margin-bottom: 0.9rem;
+  backdrop-filter: blur(14px);
+  opacity: 0; animation: rRise 0.5s ease forwards;
+}
+.history-row-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; gap: 1rem; }
+.history-exam-title { font-family: 'Fraunces', serif; font-size: 1.05rem; }
+.history-date { font-size: 0.72rem; color: rgba(245,240,230,0.4); white-space: nowrap; }
+.history-score-row { display: flex; justify-content: space-between; align-items: center; }
+.history-score { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: #E5C158; }
+.history-locked { font-size: 0.82rem; color: rgba(245,240,230,0.45); }

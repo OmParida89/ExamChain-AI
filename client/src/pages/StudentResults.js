@@ -4,21 +4,21 @@ import '../Results.css';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
-export default function StudentResults({ examId }) {
-  const [data, setData] = useState(null);
+export default function StudentResults() {
+  const [history, setHistory] = useState(null);
   const [error, setError] = useState('');
 
-  useEffect(() => { fetchScore(); }, []);
+  useEffect(() => { fetchHistory(); }, []);
 
-  async function fetchScore() {
+  async function fetchHistory() {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get(`${API}/results/student/${examId}`, {
+      const res = await axios.get(`${API}/results/my-history`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setData(res.data);
+      setHistory(res.data.history);
     } catch (err) {
-      setError(err.response?.data?.error || 'Could not fetch your result');
+      setError(err.response?.data?.error || 'Could not fetch your results');
     }
   }
 
@@ -30,19 +30,19 @@ export default function StudentResults({ examId }) {
     </div>
   );
 
-  if (!data) return (
+  if (!history) return (
     <div className="student-results-page">
       <div className="student-reveal">Loading...</div>
     </div>
   );
 
-  if (!data.released) return (
+  if (history.length === 0) return (
     <div className="student-results-page">
       <div className="student-reveal">
         <div className="locked-card">
-          <div className="lock-icon">🔒</div>
-          <div className="locked-title">Scores Not Released Yet</div>
-          <div className="locked-sub">{data.message}</div>
+          <div className="lock-icon">📭</div>
+          <div className="locked-title">No Exams Yet</div>
+          <div className="locked-sub">Once you submit an exam, it'll show up here.</div>
         </div>
       </div>
     </div>
@@ -51,19 +51,29 @@ export default function StudentResults({ examId }) {
   return (
     <div className="student-results-page">
       <div className="student-reveal">
-        <div className="reveal-h1">Your Result</div>
-        <div className="reveal-cards">
-          <div className="reveal-card score">
-            <div className="reveal-num">{data.correctCount}/{data.totalQuestions}</div>
-            <div className="reveal-label">Correct Answers</div>
-          </div>
-          <div className="reveal-card pctl">
-            <div className="reveal-num">{data.percentileScore}th</div>
-            <div className="reveal-label">Percentile</div>
-          </div>
+        <div className="reveal-h1">Your Results</div>
+
+        <div className="history-list">
+          {history.map((h, i) => (
+            <div key={h.examId} className="history-row" style={{ animationDelay: `${i * 0.06}s` }}>
+              <div className="history-row-top">
+                <span className="history-exam-title">{h.examTitle}</span>
+                <span className="history-date">{new Date(h.submittedAt).toLocaleDateString()}</span>
+              </div>
+              {h.released ? (
+                <div className="history-score-row">
+                  <span className="history-score">{h.correctCount}/{h.totalQuestions} correct</span>
+                  <span className="pctl-pill high">{h.percentileScore}th percentile</span>
+                </div>
+              ) : (
+                <div className="history-locked">🔒 Scores not released yet</div>
+              )}
+            </div>
+          ))}
         </div>
+
         <div className="reveal-foot">
-          Your percentile reflects how you ranked among your peers, accounting for question difficulty.
+          Percentiles reflect how you ranked among your peers, accounting for question difficulty.
         </div>
       </div>
     </div>

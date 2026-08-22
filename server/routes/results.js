@@ -161,4 +161,38 @@ router.get('/student/:examId', authMiddleware, studentOnly, async (req, res) => 
   }
 });
 
+// STUDENT VIEW — every exam this student has submitted, so the navbar "Results"
+// link works without needing an exam already active in the current session.
+router.get('/my-history', authMiddleware, studentOnly, async (req, res) => {
+  try {
+    const rollNumber = req.user.rollNumber;
+
+    const attempts = await Attempt.find({ studentId: rollNumber, submittedAt: { $ne: null } }).sort({ submittedAt: -1 });
+    if (attempts.length === 0) return res.json({ history: [] });
+
+    const examIds = attempts.map(a => a.examId);
+    const exams = await Exam.find({ _id: { $in: examIds } });
+    const examTitleById = {};
+    exams.forEach(e => { examTitleById[e._id.toString()] = e.title; });
+
+    const releaseDocs = await ExamRelease.find({ examId: { $in: examIds } });
+    const releasedByExamId = {};
+    releaseDocs.forEach(r => { releasedByExamId[r.examId] = r.released; });
+
+    const history = attempts.map(a => ({
+      examId: a.examId,
+      examTitle: examTitleById[a.examId] || 'Untitled Exam',
+      submittedAt: a.submittedAt,
+      released: !!releasedByExamId[a.examId],
+      correctCount: a.correctCount,
+      totalQuestions: a.totalQuestions,
+      percentileScore: a.normalizedScore
+    }));
+
+    res.json({ history });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
