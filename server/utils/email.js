@@ -6,7 +6,9 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_APP_PASSWORD
-  }
+  },
+  family: 4 // force IPv4 — Render (and similar PaaS hosts) don't support IPv6 egress,
+            // so letting Node pick Gmail's IPv6 address first fails with ENETUNREACH
 });
 
 function generateOTP() {
