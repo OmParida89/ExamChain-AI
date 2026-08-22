@@ -5,6 +5,7 @@ const Exam = require('../models/Exam');
 const Attempt = require('../models/Attempt');
 const { generateVariants } = require('../utils/llm');
 const { createBlock, verifyChain } = require('../utils/hash');
+const { computeQuestionDrift } = require('../utils/drift');
 const { authMiddleware, teacherOnly } = require('../middleware/auth');
 
 // Step 1: Generate variants for preview only — NOT saved yet
@@ -91,35 +92,7 @@ router.get('/drift/:examId', authMiddleware, teacherOnly, async (req, res) => {
     const questions = await Question.find({ examId: req.params.examId });
     const attempts = await Attempt.find({ examId: req.params.examId });
 
-    const questionDrift = questions.map(q => {
-      const qid = q._id.toString();
-      const capacity = q.variants.length;
-
-      const assignments = attempts
-        .map(a => {
-          const av = (a.assignedVariants || []).find(v => v.questionId === qid);
-          return av ? { student: a.studentName || a.studentId, variantIndex: av.variantIndex } : null;
-        })
-        .filter(Boolean);
-
-      const demand = assignments.length;
-      const byVariant = {};
-      assignments.forEach(a => { (byVariant[a.variantIndex] ||= []).push(a.student); });
-
-      const collisions = Object.entries(byVariant)
-        .filter(([, students]) => students.length > 1)
-        .map(([variantIndex, students]) => ({ variantIndex: Number(variantIndex), students }));
-
-      return {
-        questionId: qid,
-        concept: q.concept,
-        capacity,
-        demand,
-        usagePercent: capacity === 0 ? 0 : Math.round((demand / capacity) * 100),
-        drifted: collisions.length > 0,
-        collisions
-      };
-    });
+    const questionDrift = questions.map(q => computeQuestionDrift(q, attempts));
 
     res.json({
       examId: req.params.examId,

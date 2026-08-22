@@ -6,11 +6,12 @@ const API = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 export default function TeacherExamList({ setPage, setActiveExamId }) {
   const [exams, setExams] = useState([]);
+  const [workload, setWorkload] = useState({});
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({ title: '', description: '', durationMinutes: 30 });
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => { fetchExams(); }, []);
+  useEffect(() => { fetchExams(); fetchWorkload(); }, []);
 
   function authHeader() {
     const token = localStorage.getItem('token');
@@ -22,6 +23,17 @@ export default function TeacherExamList({ setPage, setActiveExamId }) {
     setExams(res.data);
   }
 
+  async function fetchWorkload() {
+    try {
+      const res = await axios.get(`${API}/exams/workload`, authHeader());
+      const byId = {};
+      res.data.exams.forEach(w => { byId[w.examId] = w; });
+      setWorkload(byId);
+    } catch (err) {
+      // non-fatal — badges just stay hidden
+    }
+  }
+
   async function handleCreate() {
     if (!form.title) return;
     setLoading(true);
@@ -30,6 +42,7 @@ export default function TeacherExamList({ setPage, setActiveExamId }) {
     setShowCreate(false);
     setLoading(false);
     fetchExams();
+    fetchWorkload();
   }
 
   function openExam(examId) {
@@ -101,24 +114,36 @@ export default function TeacherExamList({ setPage, setActiveExamId }) {
         )}
 
         <div className="exam-list">
-          {exams.map((exam, i) => (
-            <div key={exam._id} className={`exam-card ${exam.locked ? 'sealed' : ''}`} style={{ animationDelay: `${i * 0.08}s` }}>
-              <div className="exam-info">
-                <div className="exam-title">{exam.title}</div>
-                <div className="exam-meta">
-                  <span className={`status-pill ${exam.locked ? 'sealed' : 'draft'}`}>
-                    {exam.locked ? '🔒 Sealed' : '✏️ Draft'}
-                  </span>
-                  <span className="code-chip">Code <b>{exam.examCode}</b></span>
-                  <span className="duration-chip">{exam.durationMinutes} min</span>
+          {exams.map((exam, i) => {
+            const w = workload[exam._id];
+            const hasBadges = w && (w.drifted || w.inProgress > 0 || w.timedOut > 0 || w.flaggedTabSwitches > 0);
+            return (
+              <div key={exam._id} className={`exam-card ${exam.locked ? 'sealed' : ''}`} style={{ animationDelay: `${i * 0.08}s` }}>
+                <div className="exam-info">
+                  <div className="exam-title">{exam.title}</div>
+                  <div className="exam-meta">
+                    <span className={`status-pill ${exam.locked ? 'sealed' : 'draft'}`}>
+                      {exam.locked ? '🔒 Sealed' : '✏️ Draft'}
+                    </span>
+                    <span className="code-chip">Code <b>{exam.examCode}</b></span>
+                    <span className="duration-chip">{exam.durationMinutes} min</span>
+                  </div>
+                  {hasBadges && (
+                    <div className="workload-badges">
+                      {w.drifted && <span className="workload-badge warn">⚠️ Drift ({w.driftedQuestionCount})</span>}
+                      {w.inProgress > 0 && <span className="workload-badge progress">🟢 {w.inProgress} in progress</span>}
+                      {w.timedOut > 0 && <span className="workload-badge timedout">⏰ {w.timedOut} timed out</span>}
+                      {w.flaggedTabSwitches > 0 && <span className="workload-badge flagged">🚩 {w.flaggedTabSwitches} flagged</span>}
+                    </div>
+                  )}
+                </div>
+                <div className="exam-actions">
+                  <button className="action-btn" onClick={() => openExam(exam._id)}>Manage</button>
+                  <button className="action-btn results" onClick={() => openResults(exam._id)}>Results</button>
                 </div>
               </div>
-              <div className="exam-actions">
-                <button className="action-btn" onClick={() => openExam(exam._id)}>Manage</button>
-                <button className="action-btn results" onClick={() => openResults(exam._id)}>Results</button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

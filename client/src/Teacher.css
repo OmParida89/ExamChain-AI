@@ -103,6 +103,16 @@
 .code-chip b { color: #F5F0E6; opacity: 1; }
 .duration-chip { font-size: 0.78rem; color: #F5F0E6; opacity: 0.5; }
 
+.workload-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.6rem; }
+.workload-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; padding: 0.25rem 0.6rem;
+  border-radius: 99px; border: 1px solid; white-space: nowrap;
+}
+.workload-badge.warn { color: #E7A0A2; border-color: rgba(155,34,38,0.45); background: rgba(155,34,38,0.1); }
+.workload-badge.progress { color: #E5C158; border-color: rgba(201,162,39,0.4); background: rgba(201,162,39,0.1); }
+.workload-badge.timedout { color: #E7A0A2; border-color: rgba(155,34,38,0.4); background: rgba(155,34,38,0.08); }
+.workload-badge.flagged { color: #E7A0A2; border-color: rgba(155,34,38,0.5); background: rgba(155,34,38,0.12); font-weight: 700; }
+
 .exam-actions { display: flex; gap: 0.6rem; }
 .action-btn {
   background: rgba(245,240,230,0.07); border: 1px solid rgba(245,240,230,0.15);

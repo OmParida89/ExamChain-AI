@@ -21,6 +21,7 @@ ExamChain is a full-stack examination platform that solves core problems with tr
 - Add questions with a concept tag and difficulty level — AI (via OpenRouter) generates 5 unique variants per question
 - **Review and edit AI-generated variants** before they're saved — fix wording or correct answers before they go live
 - Lock an exam to freeze its questions permanently
+- **Workload overview** — the exam list itself surfaces small badges (drift, in-progress count, timed-out count, flagged tab-switches) per exam, so a teacher running several exams at once can see what needs attention without opening each one
 - **Capacity & Drift panel** — see each question's recorded variant capacity against live student demand, with a usage bar and, if demand has outstripped supply, exactly which students ended up sharing an identical variant
 - **Live Exam Activity panel** — a real-time-refreshable view of every student's status (in progress / submitted / timed out) and how many times each has switched away from the exam tab
 - View a full results dashboard: leaderboard (with tab-switch counts and a late-submission marker), concept-wise weakness analytics, and a one-click release/hide toggle for student-facing scores
@@ -153,7 +154,7 @@ This project began as a submission for the **Examinations** theme at FAR AWAY 20
 
 It has since moved from hackathon prototype toward a real, deployable product with proper authentication, email verification, and a dedicated visual identity — and gained a fourth pillar along the way:
 
-- ✅ **Observability** — a Capacity & Drift indicator that flags when live student demand has exceeded the variant supply recorded at question-creation time, plus a live exam activity view (in-progress / submitted / timed-out status, tab-switch counts) so a teacher can see what's happening *during* an exam, not just read about it afterward.
+- ✅ **Observability** — a Capacity & Drift indicator that flags when live student demand has exceeded the variant supply recorded at question-creation time, a live exam activity view (in-progress / submitted / timed-out status, tab-switch counts) so a teacher can see what's happening *during* an exam rather than reading about it afterward, and a workload rollup across all of a teacher's exams so nothing needs an extra click to surface.
 
 ---
 

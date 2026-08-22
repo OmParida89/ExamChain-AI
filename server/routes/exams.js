@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Exam = require('../models/Exam');
+const Question = require('../models/Question');
+const Attempt = require('../models/Attempt');
+const { computeQuestionDrift } = require('../utils/drift');
 const { authMiddleware, teacherOnly } = require('../middleware/auth');
 
 function generateExamCode() {
@@ -45,6 +48,43 @@ router.get('/my-exams', authMiddleware, teacherOnly, async (req, res) => {
   }
 });
 
+// At-a-glance rollup across ALL of a teacher's exams — drift, live activity, and
+// proctoring flags — so they don't have to open each exam individually to see
+// what needs attention. Declared before /:examId so it isn't swallowed by it.
+router.get('/workload', authMiddleware, teacherOnly, async (req, res) => {
+  try {
+    const exams = await Exam.find({ teacherId: req.user.id });
+    const examIds = exams.map(e => e._id.toString());
+
+    const questions = await Question.find({ examId: { $in: examIds } });
+    const attempts = await Attempt.find({ examId: { $in: examIds } });
+
+    const summary = exams.map(exam => {
+      const examId = exam._id.toString();
+      const examQuestions = questions.filter(q => q.examId === examId);
+      const examAttempts = attempts.filter(a => a.examId === examId);
+
+      const drift = examQuestions.map(q => computeQuestionDrift(q, examAttempts));
+      const inProgress = examAttempts.filter(a => !a.submittedAt).length;
+      const timedOut = examAttempts.filter(a => a.submittedAt && a.isLate).length;
+      const flaggedTabSwitches = examAttempts.filter(a => (a.tabLeaveCount || 0) >= 3).length;
+
+      return {
+        examId,
+        drifted: drift.some(d => d.drifted),
+        driftedQuestionCount: drift.filter(d => d.drifted).length,
+        inProgress,
+        timedOut,
+        flaggedTabSwitches
+      };
+    });
+
+    res.json({ exams: summary });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Get single exam by ID (teacher only, for dashboard)
 router.get('/:examId', authMiddleware, teacherOnly, async (req, res) => {
   try {
@@ -79,7 +119,6 @@ router.post('/lock/:examId', authMiddleware, teacherOnly, async (req, res) => {
     exam.locked = true;
     await exam.save();
 
-    const Question = require('../models/Question');
     await Question.updateMany({ examId: exam._id.toString() }, { locked: true });
 
     res.json({ success: true, exam });
